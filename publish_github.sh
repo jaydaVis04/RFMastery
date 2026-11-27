@@ -11,10 +11,11 @@ target_url="https://github.com/${target_full}"
 
 if [[ "${1:-}" == '--dry-run' ]]; then
     printf 'Publish plan:\n'
-    printf '  Source: %s\n  Repository: %s\n  Visibility: private\n' "$course_root" "$target_url"
+    printf '  Source: %s\n  Repository: %s\n  Visibility: public\n' "$course_root" "$target_url"
     printf '  Include: course, lessons, tools, tests, docs and root project files.\n'
     printf '  Exclude: .build, .progress, scratch and Python caches via .gitignore.\n'
     printf '  Create an initial commit on main, then push without force.\n'
+    printf '  Make the matching existing repository public if needed.\n'
     printf '  Existing repositories with content are never adopted automatically.\n'
     exit 0
 fi
@@ -73,17 +74,27 @@ if ! git diff --cached --quiet; then
     git commit -m 'Add interactive C, FPGA and RF learning course'
 fi
 
+ensure_public() {
+    local repository_visibility
+    repository_visibility="$(gh repo view "$target_full" --json visibility --jq .visibility)"
+    if [[ "$repository_visibility" != 'PUBLIC' ]]; then
+        gh repo edit "$target_full" --visibility public --accept-visibility-change-consequences
+    fi
+}
+
 if [[ -n "$existing_origin" ]]; then
+    ensure_public
     git push -u origin main
-elif existing_metadata="$(gh repo view "$target_full" --json isPrivate,isEmpty --jq '[.isPrivate,.isEmpty] | @tsv' 2>/dev/null)"; then
-    if [[ "$existing_metadata" != $'true\ttrue' ]]; then
-        printf '%s already exists and is not both private and empty. Stopping without uploading.\n' "$target_url" >&2
+elif existing_metadata="$(gh repo view "$target_full" --json isEmpty --jq .isEmpty 2>/dev/null)"; then
+    if [[ "$existing_metadata" != 'true' ]]; then
+        printf '%s already exists and is not empty. Stopping without uploading.\n' "$target_url" >&2
         exit 1
     fi
+    ensure_public
     git remote add origin "${target_url}.git"
     git push -u origin main
 else
-    gh repo create "$target_full" --private --source . --remote origin --push \
+    gh repo create "$target_full" --public --source . --remote origin --push \
         --description 'Interactive C, FPGA and RF internship preparation: 36 missions, tests, quizzes and capstones'
 fi
 
