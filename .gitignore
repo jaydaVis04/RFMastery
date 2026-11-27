@@ -1,0 +1,6 @@
+.build/
+.progress/
+__pycache__/
+*.pyc
+.DS_Store
+scratch/

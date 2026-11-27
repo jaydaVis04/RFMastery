@@ -1,0 +1,1846 @@
+[
+  {
+    "id": 1,
+    "slug": "boot",
+    "title": "Bring the receiver console online",
+    "track": "C foundations",
+    "path": "lessons/01_boot",
+    "kind": "console",
+    "hints": [
+      "Use the standard I/O header and the exact requested line.",
+      "puts writes a string followed by a newline. Return 0 from main."
+    ],
+    "explain": "Describe source → preprocessor → compiler → assembler → linker. How does an unknown variable differ from an undefined external function?",
+    "quiz": [
+      {
+        "prompt": "Which stage normally reports an unresolved external function?",
+        "answer": "Linking",
+        "distractors": [
+          "Preprocessing",
+          "Loading the text into your editor"
+        ]
+      },
+      {
+        "prompt": "What does -g request?",
+        "answer": "Debug information",
+        "distractors": [
+          "Guaranteed correctness",
+          "Maximum optimization"
+        ]
+      },
+      {
+        "prompt": "What does exit status zero conventionally mean?",
+        "answer": "Success",
+        "distractors": [
+          "A memory address",
+          "A compiler warning"
+        ]
+      }
+    ],
+    "sources": [
+      [
+        "Beej’s Guide to C",
+        "https://beej.us/guide/bgc/html/split/"
+      ]
+    ],
+    "files": [
+      "lab.c"
+    ]
+  },
+  {
+    "id": 2,
+    "slug": "declarations",
+    "title": "Name the telemetry",
+    "track": "C foundations",
+    "path": "lessons/02_declarations",
+    "kind": "c",
+    "hints": [
+      "Use sizeof(uint16_t), not a guessed width.",
+      "A function pointer is called with fn(x), like a function name."
+    ],
+    "explain": "Explain int *a[4], int (*a)[4], const int *p, and int *const p. Why is sizeof measured in bytes rather than bits?",
+    "quiz": [
+      {
+        "prompt": "What is int *a[4]?",
+        "answer": "An array of four pointers to int",
+        "distractors": [
+          "A pointer to an array of four ints",
+          "Four integers"
+        ]
+      },
+      {
+        "prompt": "What type does sizeof return?",
+        "answer": "size_t",
+        "distractors": [
+          "int on every platform",
+          "uint8_t"
+        ]
+      },
+      {
+        "prompt": "Does const int *p prevent reassignment of p?",
+        "answer": "No; it prevents modifying the int through p",
+        "distractors": [
+          "Yes; p cannot move",
+          "It makes the int atomic"
+        ]
+      }
+    ],
+    "sources": [
+      [
+        "Beej’s Guide to C",
+        "https://beej.us/guide/bgc/html/split/"
+      ]
+    ],
+    "files": [
+      "lab.c"
+    ]
+  },
+  {
+    "id": 3,
+    "slug": "control_flow",
+    "title": "Detect the threshold crossings",
+    "track": "C foundations",
+    "path": "lessons/03_control_flow",
+    "kind": "c",
+    "hints": [
+      "Start the count at zero and use i < n.",
+      "The zero-length loop must not access x[0]."
+    ],
+    "explain": "Explain unsigned countdown failure, signed overflow, and > versus >= with a concrete test case.",
+    "quiz": [
+      {
+        "prompt": "What is 7/2 in C with int operands?",
+        "answer": "3",
+        "distractors": [
+          "3.5",
+          "Undefined"
+        ]
+      },
+      {
+        "prompt": "What happens on signed integer overflow?",
+        "answer": "Undefined behavior",
+        "distractors": [
+          "Guaranteed wraparound",
+          "Always a compiler error"
+        ]
+      },
+      {
+        "prompt": "Why is size_t i >= 0 an unsafe countdown condition?",
+        "answer": "It is always true because size_t is unsigned",
+        "distractors": [
+          "size_t cannot be decremented",
+          "It skips odd indices"
+        ]
+      }
+    ],
+    "sources": [
+      [
+        "Beej’s Guide to C",
+        "https://beej.us/guide/bgc/html/split/"
+      ]
+    ],
+    "files": [
+      "lab.c"
+    ]
+  },
+  {
+    "id": 4,
+    "slug": "interfaces",
+    "title": "Separate the gain controller",
+    "track": "C foundations",
+    "path": "lessons/04_interfaces",
+    "kind": "c",
+    "hints": [
+      "Validate before writing through out.",
+      "Use comparisons, not x-lo arithmetic that could overflow."
+    ],
+    "explain": "Describe pass-by-value, output parameters, declaration versus definition, and the error contract of your API.",
+    "quiz": [
+      {
+        "prompt": "How does C pass a pointer argument?",
+        "answer": "By value, copying the pointer",
+        "distractors": [
+          "By reference automatically",
+          "By copying its allocation"
+        ]
+      },
+      {
+        "prompt": "What does static on a file-scope function do?",
+        "answer": "Gives it internal linkage",
+        "distractors": [
+          "Allocates it on the heap",
+          "Makes calls thread-safe"
+        ]
+      },
+      {
+        "prompt": "What belongs in a shared header?",
+        "answer": "Function prototypes and public type definitions",
+        "distractors": [
+          "A second main function",
+          "Every private variable definition"
+        ]
+      }
+    ],
+    "sources": [
+      [
+        "Beej’s Guide to C",
+        "https://beej.us/guide/bgc/html/split/"
+      ]
+    ],
+    "files": [
+      "lab.c"
+    ]
+  },
+  {
+    "id": 5,
+    "slug": "pointers",
+    "title": "Repair the reversed capture",
+    "track": "C memory",
+    "path": "lessons/05_pointers",
+    "kind": "c",
+    "hints": [
+      "Only n/2 swaps are needed.",
+      "Swap a[i] and a[n-1-i] while i<n/2."
+    ],
+    "explain": "Explain the difference between an array, a pointer, and a one-past pointer. Why can a function not infer n from sizeof its array parameter?",
+    "quiz": [
+      {
+        "prompt": "What is sizeof a inside void f(int a[4])?",
+        "answer": "The size of an int pointer",
+        "distractors": [
+          "Four times sizeof(int)",
+          "The number four"
+        ]
+      },
+      {
+        "prompt": "Can a one-past pointer be dereferenced?",
+        "answer": "No",
+        "distractors": [
+          "Yes if the array is nonempty",
+          "Only for reading"
+        ]
+      },
+      {
+        "prompt": "What does p+1 advance by for int *p?",
+        "answer": "One int element",
+        "distractors": [
+          "Always one byte",
+          "One whole array"
+        ]
+      }
+    ],
+    "sources": [
+      [
+        "Beej’s Guide to C",
+        "https://beej.us/guide/bgc/html/split/"
+      ]
+    ],
+    "files": [
+      "lab.c"
+    ]
+  },
+  {
+    "id": 6,
+    "slug": "buffers",
+    "title": "Read text without losing binary samples",
+    "track": "C memory",
+    "path": "lessons/06_buffers",
+    "kind": "c",
+    "hints": [
+      "Calculate required capacity safely before writing anything.",
+      "Check n > (SIZE_MAX-1)/2 before evaluating 2*n+1. Use a hex digit lookup table."
+    ],
+    "explain": "Explain a string versus binary data, why embedded zeros matter, and the capacity contract for your hex encoder.",
+    "quiz": [
+      {
+        "prompt": "How many bytes are in {0x41,0,0x42}?",
+        "answer": "3",
+        "distractors": [
+          "1",
+          "2"
+        ]
+      },
+      {
+        "prompt": "What is required by strlen?",
+        "answer": "A valid NUL-terminated string",
+        "distractors": [
+          "Only any pointer and a guessed length",
+          "A heap allocation"
+        ]
+      },
+      {
+        "prompt": "Which operation supports overlapping buffers?",
+        "answer": "memmove",
+        "distractors": [
+          "memcpy",
+          "strlen"
+        ]
+      }
+    ],
+    "sources": [
+      [
+        "Beej’s Guide to C",
+        "https://beej.us/guide/bgc/html/split/"
+      ],
+      [
+        "SEI CERT C",
+        "https://wiki.sei.cmu.edu/confluence/display/c/SEI+CERT+C+Coding+Standard"
+      ]
+    ],
+    "files": [
+      "lab.c"
+    ]
+  },
+  {
+    "id": 7,
+    "slug": "lifetimes",
+    "title": "Rescue the calibration lifetime",
+    "track": "C memory",
+    "path": "lessons/07_lifetimes",
+    "kind": "c",
+    "hints": [
+      "Allocate sizeof *p; check before storing.",
+      "The int ** lets destroy clear the caller’s pointer variable."
+    ],
+    "explain": "Draw lifetimes for a local pointer, its allocated int, a static local and an automatic local. Identify exactly who frees your return value.",
+    "quiz": [
+      {
+        "prompt": "May a function return the address of an automatic local for later use?",
+        "answer": "No, its lifetime ends on return",
+        "distractors": [
+          "Yes, if it is const",
+          "Yes, if its value is small"
+        ]
+      },
+      {
+        "prompt": "Who releases an allocation returned with caller ownership?",
+        "answer": "The caller",
+        "distractors": [
+          "The compiler automatically",
+          "The linker"
+        ]
+      },
+      {
+        "prompt": "Does p=NULL repair another dangling alias?",
+        "answer": "No",
+        "distractors": [
+          "Yes",
+          "Only for int pointers"
+        ]
+      }
+    ],
+    "sources": [
+      [
+        "Beej’s Guide to C",
+        "https://beej.us/guide/bgc/html/split/"
+      ]
+    ],
+    "files": [
+      "lab.c"
+    ]
+  },
+  {
+    "id": 8,
+    "slug": "allocation",
+    "title": "Allocate the capture window",
+    "track": "C memory",
+    "path": "lessons/08_allocation",
+    "kind": "c",
+    "hints": [
+      "Reject zero and overflow before the allocator call.",
+      "Do not read malloc storage until you initialize it."
+    ],
+    "explain": "Compare malloc, calloc and free. Explain overflow-before-allocation and why uninitialized reads are invalid.",
+    "quiz": [
+      {
+        "prompt": "What does malloc initialize?",
+        "answer": "Nothing; its storage is uninitialized",
+        "distractors": [
+          "Every int to zero",
+          "All pointers to NULL"
+        ]
+      },
+      {
+        "prompt": "What does free(NULL) do?",
+        "answer": "Nothing",
+        "distractors": [
+          "Always crashes",
+          "Frees every allocation"
+        ]
+      },
+      {
+        "prompt": "When must n*sizeof *p overflow be checked?",
+        "answer": "Before the multiplication used to allocate",
+        "distractors": [
+          "After writing the array",
+          "Only after malloc fails"
+        ]
+      }
+    ],
+    "sources": [
+      [
+        "Beej’s Guide to C",
+        "https://beej.us/guide/bgc/html/split/"
+      ],
+      [
+        "SEI CERT C",
+        "https://wiki.sei.cmu.edu/confluence/display/c/SEI+CERT+C+Coding+Standard"
+      ]
+    ],
+    "files": [
+      "lab.c"
+    ]
+  },
+  {
+    "id": 9,
+    "slug": "vector",
+    "title": "Grow telemetry without losing it",
+    "track": "C memory",
+    "path": "lessons/09_vector",
+    "kind": "c",
+    "hints": [
+      "Check len<=cap and whether cap=0 agrees with data=NULL.",
+      "Check cap>SIZE_MAX/2 and newcap>SIZE_MAX/sizeof *data. Only commit fields after tmp succeeds."
+    ],
+    "explain": "Explain the vector invariant, temporary realloc pointer, failure recovery, and what happens to aliases after a successful resize.",
+    "quiz": [
+      {
+        "prompt": "If nonzero realloc fails, what happens to the original block?",
+        "answer": "It remains valid and owned by the caller",
+        "distractors": [
+          "It is freed",
+          "It is zeroed"
+        ]
+      },
+      {
+        "prompt": "When should capacity be updated?",
+        "answer": "After successful allocation",
+        "distractors": [
+          "Before realloc",
+          "Only in destroy"
+        ]
+      },
+      {
+        "prompt": "Why can doubling capacity be dangerous?",
+        "answer": "Capacity or byte-size arithmetic can overflow",
+        "distractors": [
+          "Doubling is always undefined",
+          "It necessarily leaks"
+        ]
+      }
+    ],
+    "sources": [
+      [
+        "Beej’s Guide to C",
+        "https://beej.us/guide/bgc/html/split/"
+      ],
+      [
+        "SEI CERT C",
+        "https://wiki.sei.cmu.edu/confluence/display/c/SEI+CERT+C+Coding+Standard"
+      ]
+    ],
+    "files": [
+      "lab.c"
+    ]
+  },
+  {
+    "id": 10,
+    "slug": "debugging",
+    "title": "Fix the corrupted capture",
+    "track": "C debugging",
+    "path": "lessons/10_debugging",
+    "kind": "c",
+    "hints": [
+      "Allocate n+1 after checking n!=SIZE_MAX.",
+      "Copy while i<n, append at p[n], and return p without freeing it."
+    ],
+    "explain": "Diagnose the three commented bugs. Describe one sanitizer limitation and the difference between a leak and use-after-free.",
+    "quiz": [
+      {
+        "prompt": "Does undefined behavior always crash?",
+        "answer": "No",
+        "distractors": [
+          "Yes",
+          "Only in optimized builds"
+        ]
+      },
+      {
+        "prompt": "Which tool instruments many memory accesses?",
+        "answer": "AddressSanitizer",
+        "distractors": [
+          "nm",
+          "The preprocessor"
+        ]
+      },
+      {
+        "prompt": "Should Valgrind generally run on the ASan build?",
+        "answer": "No; use a separate unsanitized build",
+        "distractors": [
+          "Yes, always combine both",
+          "Valgrind replaces the compiler"
+        ]
+      }
+    ],
+    "sources": [
+      [
+        "Beej’s Guide to C",
+        "https://beej.us/guide/bgc/html/split/"
+      ],
+      [
+        "Clang AddressSanitizer",
+        "https://clang.llvm.org/docs/AddressSanitizer.html"
+      ]
+    ],
+    "files": [
+      "lab.c"
+    ]
+  },
+  {
+    "id": 11,
+    "slug": "packets",
+    "title": "Define the five-byte wire format",
+    "track": "C representations",
+    "path": "lessons/11_packets",
+    "kind": "c",
+    "hints": [
+      "Convert signed fields to uint16_t for encoding; unsigned conversion is defined modulo 65536.",
+      "For decode, calculate int32_t value = u>=32768 ? (int32_t)u-65536 : (int32_t)u."
+    ],
+    "explain": "Explain padding, alignment, byte order and why writing sizeof(struct sample) bytes would violate this packet contract.",
+    "quiz": [
+      {
+        "prompt": "Is sizeof(struct sample) required to be five?",
+        "answer": "No, padding may increase it",
+        "distractors": [
+          "Yes, always",
+          "Only if allocated with calloc"
+        ]
+      },
+      {
+        "prompt": "What does a union do?",
+        "answer": "Overlaps member storage",
+        "distractors": [
+          "Concatenates member storage",
+          "Makes all members atomic"
+        ]
+      },
+      {
+        "prompt": "Why avoid casting a byte buffer to a struct pointer?",
+        "answer": "Alignment, aliasing and representation constraints",
+        "distractors": [
+          "Pointers cannot point to bytes",
+          "It always changes byte order"
+        ]
+      }
+    ],
+    "sources": [
+      [
+        "Beej’s Guide to C",
+        "https://beej.us/guide/bgc/html/split/"
+      ],
+      [
+        "SEI CERT C",
+        "https://wiki.sei.cmu.edu/confluence/display/c/SEI+CERT+C+Coding+Standard"
+      ]
+    ],
+    "files": [
+      "lab.c"
+    ]
+  },
+  {
+    "id": 12,
+    "slug": "bits_crc",
+    "title": "Protect the control word",
+    "track": "C representations",
+    "path": "lessons/12_bits_crc",
+    "kind": "c",
+    "hints": [
+      "For the CRC, XOR each byte into crc, then do eight conditional shift/XOR steps.",
+      "Initialize and finalize with 0xffffffff. Handle k%32==0 before evaluating 32-k."
+    ],
+    "explain": "Explain how you preserve unrelated bits, why rotate(0) needs care, and why CRC cannot prove authenticity.",
+    "quiz": [
+      {
+        "prompt": "Is a 32-bit value shifted by 32 defined?",
+        "answer": "No",
+        "distractors": [
+          "Yes, it becomes zero",
+          "Only if unsigned"
+        ]
+      },
+      {
+        "prompt": "What does little-endian describe?",
+        "answer": "Least significant byte stored first",
+        "distractors": [
+          "Bits necessarily sent least significant first",
+          "Signed numbers only"
+        ]
+      },
+      {
+        "prompt": "Does CRC authenticate a sender?",
+        "answer": "No",
+        "distractors": [
+          "Yes",
+          "Only for short packets"
+        ]
+      }
+    ],
+    "sources": [
+      [
+        "Beej’s Guide to C",
+        "https://beej.us/guide/bgc/html/split/"
+      ],
+      [
+        "CRC catalogue parameters",
+        "https://reveng.sourceforge.io/crc-catalogue/17plus.htm#crc.cat.crc-32-iso-hdlc"
+      ]
+    ],
+    "files": [
+      "lab.c"
+    ]
+  },
+  {
+    "id": 13,
+    "slug": "registers",
+    "title": "Bring a simulated device out of reset",
+    "track": "Embedded C",
+    "path": "lessons/13_registers",
+    "kind": "c",
+    "hints": [
+      "A bounded for loop makes the timeout explicit.",
+      "Clear mask is ones & 0x0f. The simulated model updates ordinary memory."
+    ],
+    "explain": "Compare volatile and atomic. Explain W1C and why bounded polling matters even when hardware usually works.",
+    "quiz": [
+      {
+        "prompt": "Does volatile make a shared counter thread-safe?",
+        "answer": "No",
+        "distractors": [
+          "Yes",
+          "Only with optimization off"
+        ]
+      },
+      {
+        "prompt": "What does W1C mean?",
+        "answer": "Writing a one clears that status bit",
+        "distractors": [
+          "Writing zero clears all bits",
+          "Every write toggles the whole register"
+        ]
+      },
+      {
+        "prompt": "What should a poll loop include?",
+        "answer": "A timeout or bounded retry policy",
+        "distractors": [
+          "An unconditional infinite loop",
+          "A heap allocation each iteration"
+        ]
+      }
+    ],
+    "sources": [
+      [
+        "Linux device access documentation",
+        "https://docs.kernel.org/driver-api/device-io.html"
+      ],
+      [
+        "SEI CERT C",
+        "https://wiki.sei.cmu.edu/confluence/display/c/SEI+CERT+C+Coding+Standard"
+      ]
+    ],
+    "files": [
+      "lab.c"
+    ]
+  },
+  {
+    "id": 14,
+    "slug": "ring",
+    "title": "Buffer a burst of samples",
+    "track": "Embedded C",
+    "path": "lessons/14_ring",
+    "kind": "c",
+    "hints": [
+      "Check count before touching data.",
+      "Advance indices with (index+1)%RING_CAP. A power of two is unnecessary."
+    ],
+    "explain": "Explain full/empty invariants, wrapping, FIFO ordering, and why a linked list may be worse for a sample stream.",
+    "quiz": [
+      {
+        "prompt": "Must every ring capacity be a power of two?",
+        "answer": "No; modulo works for other capacities",
+        "distractors": [
+          "Yes",
+          "Only if it stores ints"
+        ]
+      },
+      {
+        "prompt": "What distinguishes full from empty in this ring?",
+        "answer": "The count field",
+        "distractors": [
+          "head==tail alone",
+          "A NULL data pointer"
+        ]
+      },
+      {
+        "prompt": "Is this ring safe for two concurrent threads as written?",
+        "answer": "No",
+        "distractors": [
+          "Yes because fixed capacity",
+          "Yes if its fields are volatile"
+        ]
+      }
+    ],
+    "sources": [
+      [
+        "Beej’s Guide to C",
+        "https://beej.us/guide/bgc/html/split/"
+      ]
+    ],
+    "files": [
+      "lab.c"
+    ]
+  },
+  {
+    "id": 15,
+    "slug": "files",
+    "title": "Decode an interleaved I/Q capture",
+    "track": "C systems",
+    "path": "lessons/15_files",
+    "kind": "c",
+    "hints": [
+      "Assemble two unsigned 16-bit values using shifts on unsigned operands.",
+      "Map values >=32768 into the range -32768..-1 by subtracting 65536 in int32_t."
+    ],
+    "explain": "Describe EOF versus I/O error, short reads, explicit endianness and what should happen to a one-byte trailing fragment.",
+    "quiz": [
+      {
+        "prompt": "How many bytes per complex int16 sample?",
+        "answer": "4",
+        "distractors": [
+          "2",
+          "16"
+        ]
+      },
+      {
+        "prompt": "What distinguishes EOF from a FILE stream error after fread stops?",
+        "answer": "ferror",
+        "distractors": [
+          "The byte order",
+          "sizeof(FILE)"
+        ]
+      },
+      {
+        "prompt": "Should a truncated final sample be silently ignored?",
+        "answer": "No, report malformed input",
+        "distractors": [
+          "Yes, always",
+          "Only if the file is on Linux"
+        ]
+      }
+    ],
+    "sources": [
+      [
+        "Beej’s Guide to C",
+        "https://beej.us/guide/bgc/html/split/"
+      ],
+      [
+        "Linux man-pages",
+        "https://man7.org/linux/man-pages/"
+      ]
+    ],
+    "files": [
+      "lab.c"
+    ]
+  },
+  {
+    "id": 16,
+    "slug": "concurrency",
+    "title": "Count completions across workers",
+    "track": "C systems",
+    "path": "lessons/16_concurrency",
+    "kind": "c",
+    "hints": [
+      "Use the APIs in stdatomic.h.",
+      "atomic_fetch_add_explicit and atomic_load_explicit with memory_order_relaxed suffice only for this independent count."
+    ],
+    "explain": "Explain a data race, volatile versus atomic, and why an atomic event count alone is not a DMA/cache-coherency API. Describe the buffer ownership state transitions.",
+    "quiz": [
+      {
+        "prompt": "What does a race on ordinary shared C data cause?",
+        "answer": "Undefined behavior",
+        "distractors": [
+          "Guaranteed last-writer-wins",
+          "Automatic locking"
+        ]
+      },
+      {
+        "prompt": "What does relaxed atomic increment guarantee here?",
+        "answer": "An indivisible counter update, without publishing other data",
+        "distractors": [
+          "All DMA writes are coherent",
+          "No thread can block"
+        ]
+      },
+      {
+        "prompt": "If production stays faster than consumption, what happens?",
+        "answer": "Finite buffers eventually fill",
+        "distractors": [
+          "A ring grows forever",
+          "The compiler fixes the rate"
+        ]
+      }
+    ],
+    "sources": [
+      [
+        "Beej’s Guide to C",
+        "https://beej.us/guide/bgc/html/split/"
+      ],
+      [
+        "Linux device access documentation",
+        "https://docs.kernel.org/driver-api/device-io.html"
+      ]
+    ],
+    "files": [
+      "lab.c"
+    ],
+    "flags": [
+      "-pthread"
+    ]
+  },
+  {
+    "id": 17,
+    "slug": "fixed_point",
+    "title": "Filter samples in Q15",
+    "track": "DSP in C",
+    "path": "lessons/17_fixed_point",
+    "kind": "c",
+    "hints": [
+      "Keep the sum in int64_t, then divide before narrowing.",
+      "Output = (8192*x + 16384*previous1 + 8192*previous2)/32768; update history after calculating."
+    ],
+    "explain": "Explain Q15 scale, accumulator width, saturation versus wraparound, truncation for negative values, and the impulse response.",
+    "quiz": [
+      {
+        "prompt": "What is the real value represented by Q15 integer 16384?",
+        "answer": "0.5",
+        "distractors": [
+          "16384",
+          "2"
+        ]
+      },
+      {
+        "prompt": "How many fractional bits are in a Q15×Q15 product?",
+        "answer": "30",
+        "distractors": [
+          "15",
+          "16"
+        ]
+      },
+      {
+        "prompt": "What is the chosen negative rescaling rule?",
+        "answer": "Divide by 32768 with truncation toward zero",
+        "distractors": [
+          "Always round toward negative infinity",
+          "Rely on signed shift behavior"
+        ]
+      }
+    ],
+    "sources": [
+      [
+        "PySDR",
+        "https://pysdr.org/"
+      ],
+      [
+        "Beej’s Guide to C",
+        "https://beej.us/guide/bgc/html/split/"
+      ]
+    ],
+    "files": [
+      "lab.c"
+    ]
+  },
+  {
+    "id": 18,
+    "slug": "logic",
+    "title": "Route the digital input",
+    "track": "FPGA foundations",
+    "path": "lessons/18_logic",
+    "kind": "hdl",
+    "hints": [
+      "Vector indexing can directly implement a selector.",
+      "assign y = data[sel]; describes the desired combinational hardware."
+    ],
+    "explain": "Explain combinational versus sequential logic. Why does this mux need no clock, while a counter does?",
+    "quiz": [
+      {
+        "prompt": "Does a combinational mux require a clock?",
+        "answer": "No",
+        "distractors": [
+          "Yes",
+          "Only when selecting input zero"
+        ]
+      },
+      {
+        "prompt": "What does a flip-flop do?",
+        "answer": "Stores a bit sampled at a clock edge",
+        "distractors": [
+          "Compiles C",
+          "Converts dBm to volts"
+        ]
+      },
+      {
+        "prompt": "What can incomplete combinational assignment infer?",
+        "answer": "An unintended latch",
+        "distractors": [
+          "Guaranteed zero",
+          "An FFT"
+        ]
+      }
+    ],
+    "sources": [
+      [
+        "HDLBits exercises",
+        "https://hdlbits.01xz.net/wiki/Main_Page"
+      ],
+      [
+        "Icarus Verilog documentation",
+        "https://steveicarus.github.io/iverilog/"
+      ]
+    ],
+    "files": [
+      "lab.v"
+    ]
+  },
+  {
+    "id": 19,
+    "slug": "counter",
+    "title": "Clock the sample counter",
+    "track": "FPGA foundations",
+    "path": "lessons/19_counter",
+    "kind": "hdl",
+    "hints": [
+      "Reset must be inside the posedge process.",
+      "Use nonblocking assignments and 4-bit constants."
+    ],
+    "explain": "Explain nonblocking updates, synchronous reset, simulation scheduling and why simulation cannot prove hardware timing.",
+    "quiz": [
+      {
+        "prompt": "What is preferred for clocked state assignment?",
+        "answer": "Nonblocking <=",
+        "distractors": [
+          "Continuous assign to the same reg",
+          "A C assignment"
+        ]
+      },
+      {
+        "prompt": "When is synchronous reset sampled?",
+        "answer": "At the active clock edge",
+        "distractors": [
+          "Immediately on any change",
+          "Only when simulation starts"
+        ]
+      },
+      {
+        "prompt": "Does functional simulation prove timing closure?",
+        "answer": "No",
+        "distractors": [
+          "Yes",
+          "Only for counters"
+        ]
+      }
+    ],
+    "sources": [
+      [
+        "HDLBits exercises",
+        "https://hdlbits.01xz.net/wiki/Main_Page"
+      ],
+      [
+        "Icarus Verilog documentation",
+        "https://steveicarus.github.io/iverilog/"
+      ]
+    ],
+    "files": [
+      "lab.v"
+    ]
+  },
+  {
+    "id": 20,
+    "slug": "fsm",
+    "title": "Recognize a framed command",
+    "track": "FPGA foundations",
+    "path": "lessons/20_fsm",
+    "kind": "hdl",
+    "hints": [
+      "Define IDLE, PAYLOAD, END state values.",
+      "Default done to zero each edge; only assert it for valid 5A while in END."
+    ],
+    "explain": "Draw the FSM, explain the invalid end-marker rule, and compare pipeline latency to throughput. How would a timeout alter the state machine?",
+    "quiz": [
+      {
+        "prompt": "What is a Moore output based on?",
+        "answer": "Current state",
+        "distractors": [
+          "Only analog amplitude",
+          "The compiler version"
+        ]
+      },
+      {
+        "prompt": "Can pipelining increase latency but keep one result each cycle?",
+        "answer": "Yes",
+        "distractors": [
+          "No",
+          "Only in C"
+        ]
+      },
+      {
+        "prompt": "What is a critical path?",
+        "answer": "A longest timing path that limits the clock period",
+        "distractors": [
+          "A stack pointer",
+          "A packet checksum"
+        ]
+      }
+    ],
+    "sources": [
+      [
+        "HDLBits exercises",
+        "https://hdlbits.01xz.net/wiki/Main_Page"
+      ],
+      [
+        "Icarus Verilog documentation",
+        "https://steveicarus.github.io/iverilog/"
+      ]
+    ],
+    "files": [
+      "lab.v"
+    ]
+  },
+  {
+    "id": 21,
+    "slug": "stream",
+    "title": "Survive downstream backpressure",
+    "track": "FPGA streaming",
+    "path": "lessons/21_stream",
+    "kind": "hdl",
+    "hints": [
+      "Input may advance only on s_valid && s_ready at posedge.",
+      "When !m_valid || m_ready, set m_valid<=s_valid and capture data only if s_valid."
+    ],
+    "explain": "Explain all four valid/ready combinations, stall stability, simultaneous replacement, reset flush, and why multibit CDC needs more than independent synchronizers.",
+    "quiz": [
+      {
+        "prompt": "When does a streaming transfer occur?",
+        "answer": "At an edge when valid and ready are both high",
+        "distractors": [
+          "Whenever valid changes",
+          "Whenever ready changes"
+        ]
+      },
+      {
+        "prompt": "What must a producer do while valid=1 and ready=0?",
+        "answer": "Hold data and valid stable",
+        "distractors": [
+          "Drop the sample",
+          "Send the next sample anyway"
+        ]
+      },
+      {
+        "prompt": "Is one two-flop synchronizer per bit sufficient for a coherent changing bus?",
+        "answer": "No",
+        "distractors": [
+          "Yes",
+          "Only for 16-bit words"
+        ]
+      }
+    ],
+    "sources": [
+      [
+        "HDLBits exercises",
+        "https://hdlbits.01xz.net/wiki/Main_Page"
+      ],
+      [
+        "Icarus Verilog documentation",
+        "https://steveicarus.github.io/iverilog/"
+      ],
+      [
+        "Arm AMBA documentation",
+        "https://developer.arm.com/Architectures/AMBA"
+      ]
+    ],
+    "files": [
+      "lab.v"
+    ]
+  },
+  {
+    "id": 22,
+    "slug": "integration",
+    "title": "Define accelerator ownership",
+    "track": "C and FPGA integration",
+    "path": "lessons/22_integration",
+    "kind": "c",
+    "hints": [
+      "Use a switch over state and match exactly one permitted event.",
+      "Validate the entire transition before assigning the new state."
+    ],
+    "explain": "Describe host versus FPGA work, the four ownership states, and the cache/ordering requirements that this simulation does not implement.",
+    "quiz": [
+      {
+        "prompt": "What is normally control-plane work?",
+        "answer": "Configuring coefficients and status registers",
+        "distractors": [
+          "Every high-rate multiply necessarily",
+          "Antenna radiation"
+        ]
+      },
+      {
+        "prompt": "What comes after synthesis in a physical implementation flow?",
+        "answer": "Placement/routing and timing analysis",
+        "distractors": [
+          "Automatic proof of RF performance",
+          "malloc"
+        ]
+      },
+      {
+        "prompt": "Does this state model implement real DMA coherency?",
+        "answer": "No; platform APIs and device contracts are still needed",
+        "distractors": [
+          "Yes",
+          "Only on Linux"
+        ]
+      }
+    ],
+    "sources": [
+      [
+        "Linux device access documentation",
+        "https://docs.kernel.org/driver-api/device-io.html"
+      ],
+      [
+        "Icarus Verilog documentation",
+        "https://steveicarus.github.io/iverilog/"
+      ]
+    ],
+    "files": [
+      "lab.c"
+    ]
+  },
+  {
+    "id": 23,
+    "slug": "rf_units",
+    "title": "Recover the units",
+    "track": "RF vocabulary and math",
+    "path": "lessons/23_rf_units",
+    "kind": "c",
+    "hints": [
+      "Use log10 and pow, not natural log for dBm.",
+      "isfinite helps reject NaN and infinities before calculation."
+    ],
+    "explain": "Explain dB, dBm and dBi conversationally. Convert -30 dBm to watts and calculate wavelength at 900 MHz.",
+    "quiz": [
+      {
+        "prompt": "What power is 30 dBm?",
+        "answer": "1 watt",
+        "distractors": [
+          "30 watts",
+          "30 milliwatts"
+        ]
+      },
+      {
+        "prompt": "What is dB?",
+        "answer": "A logarithmic ratio",
+        "distractors": [
+          "An absolute power without reference",
+          "A sample rate"
+        ]
+      },
+      {
+        "prompt": "Approximate wavelength at 1 GHz?",
+        "answer": "0.30 meters",
+        "distractors": [
+          "3 meters",
+          "0.003 meters"
+        ]
+      }
+    ],
+    "sources": [
+      [
+        "PySDR",
+        "https://pysdr.org/"
+      ]
+    ],
+    "files": [
+      "lab.c"
+    ]
+  },
+  {
+    "id": 24,
+    "slug": "link_budget",
+    "title": "Find the missing link margin",
+    "track": "RF vocabulary and math",
+    "path": "lessons/24_link_budget",
+    "kind": "c",
+    "hints": [
+      "Add gains; subtract losses.",
+      "Subtract the noise level with its sign: -71 - (-100)."
+    ],
+    "explain": "Walk through a receiver signal chain, explain LNA/PA/LO/ADC/DAC, and state two limitations of this simple link budget.",
+    "quiz": [
+      {
+        "prompt": "What does an LNA primarily aim to do?",
+        "answer": "Amplify a weak receive signal while adding little noise",
+        "distractors": [
+          "Transmit maximum RF power",
+          "Compute an FFT"
+        ]
+      },
+      {
+        "prompt": "How do you compute SNR from signal and noise dBm in the same bandwidth?",
+        "answer": "Signal minus noise",
+        "distractors": [
+          "Signal plus noise",
+          "Multiply the dBm numbers"
+        ]
+      },
+      {
+        "prompt": "Does gain undo ADC clipping?",
+        "answer": "No",
+        "distractors": [
+          "Yes",
+          "Only in Q15"
+        ]
+      }
+    ],
+    "sources": [
+      [
+        "PySDR",
+        "https://pysdr.org/"
+      ]
+    ],
+    "files": [
+      "lab.c"
+    ]
+  },
+  {
+    "id": 25,
+    "slug": "sampling",
+    "title": "Identify the aliased beacon",
+    "track": "RF and DSP",
+    "path": "lessons/25_sampling",
+    "kind": "c",
+    "hints": [
+      "Take fabs(f), reduce modulo fs, then reflect values above fs/2.",
+      "A 1000 Hz tone at fs=1000 aliases to DC."
+    ],
+    "explain": "Explain Nyquist, anti-alias filtering, quantization and clipping. Why is real-cosine frequency folding different from a complex I/Q frequency axis?",
+    "quiz": [
+      {
+        "prompt": "At fs=1000 Hz, what does a real 850 Hz cosine alias to?",
+        "answer": "150 Hz",
+        "distractors": [
+          "850 Hz",
+          "50 Hz"
+        ]
+      },
+      {
+        "prompt": "When should an anti-alias filter be applied for decimation?",
+        "answer": "Before downsampling",
+        "distractors": [
+          "After aliases are mixed together",
+          "Only to the plot labels"
+        ]
+      },
+      {
+        "prompt": "What is ADC clipping?",
+        "answer": "Input amplitude exceeds the converter range",
+        "distractors": [
+          "Sample rate is zero",
+          "A correct CRC"
+        ]
+      }
+    ],
+    "sources": [
+      [
+        "PySDR",
+        "https://pysdr.org/"
+      ]
+    ],
+    "files": [
+      "lab.c"
+    ]
+  },
+  {
+    "id": 26,
+    "slug": "iq_mixer",
+    "title": "Move a complex beacon to baseband",
+    "track": "RF and DSP",
+    "path": "lessons/26_iq_mixer",
+    "kind": "c",
+    "hints": [
+      "(a+jb)(c+jd)=(ac-bd)+j(ad+bc).",
+      "The oscillator for downconversion is cos(angle)-j*sin(angle)."
+    ],
+    "explain": "Explain I/Q, complex magnitude/phase, NCO and the sign of frequency translation. Contrast positive and negative complex tones.",
+    "quiz": [
+      {
+        "prompt": "Magnitude of 3+4j?",
+        "answer": "5",
+        "distractors": [
+          "7",
+          "25"
+        ]
+      },
+      {
+        "prompt": "What does multiplication by exp(-j2πf0t) do?",
+        "answer": "Shifts a complex spectrum down by f0",
+        "distractors": [
+          "Always increases amplitude",
+          "Converts samples to dBm"
+        ]
+      },
+      {
+        "prompt": "Why use atan2(Q,I)?",
+        "answer": "It preserves the phase quadrant",
+        "distractors": [
+          "It removes all noise",
+          "It computes a CRC"
+        ]
+      }
+    ],
+    "sources": [
+      [
+        "PySDR",
+        "https://pysdr.org/"
+      ]
+    ],
+    "files": [
+      "lab.c"
+    ]
+  },
+  {
+    "id": 27,
+    "slug": "spectrum",
+    "title": "Find the tone in the spectrum",
+    "track": "RF and DSP",
+    "path": "lessons/27_spectrum",
+    "kind": "c",
+    "hints": [
+      "For each k, sum x[n] times cos(angle)-j*sin(angle).",
+      "Avoid unsigned k-N underflow by converting to double before subtraction."
+    ],
+    "explain": "Explain DFT versus FFT, bin spacing, leakage, windowing, zero padding and why spectrum units require normalization/calibration.",
+    "quiz": [
+      {
+        "prompt": "Bin spacing for 1 MS/s and N=4096?",
+        "answer": "About 244.14 Hz",
+        "distractors": [
+          "4096 Hz",
+          "1 MHz"
+        ]
+      },
+      {
+        "prompt": "Does zero padding add true frequency resolution?",
+        "answer": "No; it provides a finer plotted grid",
+        "distractors": [
+          "Yes, unlimited resolution",
+          "Only for complex samples"
+        ]
+      },
+      {
+        "prompt": "Can raw FFT magnitude be called dBm without calibration?",
+        "answer": "No",
+        "distractors": [
+          "Yes",
+          "Only with a Hann window"
+        ]
+      }
+    ],
+    "sources": [
+      [
+        "PySDR",
+        "https://pysdr.org/"
+      ],
+      [
+        "NumPy FFT documentation",
+        "https://numpy.org/doc/stable/reference/routines.fft.html"
+      ]
+    ],
+    "files": [
+      "lab.c"
+    ]
+  },
+  {
+    "id": 28,
+    "slug": "decimation",
+    "title": "Reduce the stream rate responsibly",
+    "track": "RF and DSP",
+    "path": "lessons/28_decimation",
+    "kind": "c",
+    "hints": [
+      "Compute need=n/M+(n%M!=0) without n+M-1 overflow.",
+      "Update the filter on every sample, even when no output is emitted."
+    ],
+    "explain": "Explain anti-aliasing before decimation, passband/transition/stopband, interpolation images, and the toy filter’s limits.",
+    "quiz": [
+      {
+        "prompt": "New sample rate after decimating 48 kS/s by 4?",
+        "answer": "12 kS/s",
+        "distractors": [
+          "192 kS/s",
+          "6 kS/s"
+        ]
+      },
+      {
+        "prompt": "New real Nyquist frequency at 12 kS/s?",
+        "answer": "6 kHz",
+        "distractors": [
+          "12 kHz",
+          "24 kHz"
+        ]
+      },
+      {
+        "prompt": "Does any short smoothing filter guarantee sufficient anti-alias rejection?",
+        "answer": "No; specify and verify its response",
+        "distractors": [
+          "Yes",
+          "Only if it sums to one"
+        ]
+      }
+    ],
+    "sources": [
+      [
+        "PySDR",
+        "https://pysdr.org/"
+      ],
+      [
+        "SciPy filter design",
+        "https://docs.scipy.org/doc/scipy/reference/signal.html"
+      ]
+    ],
+    "files": [
+      "lab.c"
+    ]
+  },
+  {
+    "id": 29,
+    "slug": "modulation",
+    "title": "Map bits onto a constellation",
+    "track": "RF vocabulary and DSP",
+    "path": "lessons/29_modulation",
+    "kind": "c",
+    "hints": [
+      "Use sqrt(0.5) for each component magnitude.",
+      "Count each bit position separately; EVM is a ratio in this lab, not percent or dB."
+    ],
+    "explain": "Explain bits/symbol, EVM versus BER, QAM, OFDM and cyclic prefix. What assumptions are missing before claiming a useful net data rate?",
+    "quiz": [
+      {
+        "prompt": "Uncoded QPSK at 1 Msymbol/s carries how many bits/s?",
+        "answer": "2 Mbit/s",
+        "distractors": [
+          "1 Mbit/s",
+          "4 Mbit/s"
+        ]
+      },
+      {
+        "prompt": "What is BER?",
+        "answer": "Wrong compared bits divided by total compared bits",
+        "distractors": [
+          "FFT bin width",
+          "Receiver gain"
+        ]
+      },
+      {
+        "prompt": "What does an OFDM cyclic prefix help manage?",
+        "answer": "Multipath within the designed delay conditions",
+        "distractors": [
+          "All possible interference",
+          "Heap allocation"
+        ]
+      }
+    ],
+    "sources": [
+      [
+        "PySDR",
+        "https://pysdr.org/"
+      ]
+    ],
+    "files": [
+      "lab.c"
+    ]
+  },
+  {
+    "id": 30,
+    "slug": "beamforming",
+    "title": "Align two antenna channels",
+    "track": "RF vocabulary and DSP",
+    "path": "lessons/30_beamforming",
+    "kind": "c",
+    "hints": [
+      "Reuse the complex multiply formula.",
+      "The weight convention is explicit: do not silently conjugate it."
+    ],
+    "explain": "Explain coherent combining, MIMO, polarization, half-wavelength spacing and why channel calibration matters over a wide band.",
+    "quiz": [
+      {
+        "prompt": "What happens when equal voltages with opposite phase are added?",
+        "answer": "They cancel ideally",
+        "distractors": [
+          "Their magnitudes always add",
+          "The power becomes negative"
+        ]
+      },
+      {
+        "prompt": "What does beamforming adjust across elements?",
+        "answer": "Complex amplitude/phase weights (or delays as appropriate)",
+        "distractors": [
+          "Only C pointer addresses",
+          "Only file names"
+        ]
+      },
+      {
+        "prompt": "Why calibrate a wideband array?",
+        "answer": "Channel gain, phase and delay responses vary with frequency",
+        "distractors": [
+          "Calibration increases malloc capacity",
+          "To remove all thermal noise"
+        ]
+      }
+    ],
+    "sources": [
+      [
+        "PySDR",
+        "https://pysdr.org/"
+      ],
+      [
+        "Battelle public RavenStar page",
+        "https://www.battelle.org/markets/industry/communications/ravenstar"
+      ]
+    ],
+    "files": [
+      "lab.c"
+    ]
+  },
+  {
+    "id": 31,
+    "slug": "streaming",
+    "title": "Account for missing receiver blocks",
+    "track": "SDR systems",
+    "path": "lessons/31_streaming",
+    "kind": "python",
+    "hints": [
+      "Each adjacent sequence gap contributes current-previous-1.",
+      "Milliseconds = 1000*count/rate; bytes per second is a different quantity."
+    ],
+    "explain": "Explain overflow, underflow, late commands, throughput versus latency, and your policy for sequence gaps.",
+    "quiz": [
+      {
+        "prompt": "Payload for four complex-int16 channels at 5 MS/s?",
+        "answer": "80 MB/s before overhead",
+        "distractors": [
+          "20 MB/s",
+          "80 Mbit/s"
+        ]
+      },
+      {
+        "prompt": "A 4096-sample block at 1 MS/s spans?",
+        "answer": "4.096 ms",
+        "distractors": [
+          "4.096 seconds",
+          "4096 ms"
+        ]
+      },
+      {
+        "prompt": "What does a receiver overflow indicate?",
+        "answer": "Receive samples could not be delivered or consumed in time",
+        "distractors": [
+          "The transmitter received too many commands",
+          "The antenna gain is necessarily too high"
+        ]
+      }
+    ],
+    "sources": [
+      [
+        "Ettus UHD manual",
+        "https://files.ettus.com/manual/"
+      ],
+      [
+        "PySDR",
+        "https://pysdr.org/"
+      ]
+    ],
+    "files": [
+      "lab.py"
+    ]
+  },
+  {
+    "id": 32,
+    "slug": "architecture",
+    "title": "Brief the radio team",
+    "track": "RF systems conversation",
+    "path": "lessons/32_architecture",
+    "kind": "design",
+    "hints": [
+      "Keep product facts separate from your proposed architecture.",
+      "Ask which C standard, FPGA/HDL/toolchain, OS, stream interfaces and instruments the team uses."
+    ],
+    "explain": "Deliver your briefing aloud in 90 seconds. Explain what you know from public sources and which implementation details you must ask the team to confirm.",
+    "quiz": [
+      {
+        "prompt": "What is O-RAN 7.2x?",
+        "answer": "A lower-layer radio functional split",
+        "distractors": [
+          "A C compiler version",
+          "A modulation constellation"
+        ]
+      },
+      {
+        "prompt": "Can we infer RavenStar’s FPGA vendor from this course?",
+        "answer": "No; the internal stack was not supplied",
+        "distractors": [
+          "Yes; generic Verilog proves it",
+          "Yes; every RU uses the same chip"
+        ]
+      },
+      {
+        "prompt": "Why does fronthaul timing matter?",
+        "answer": "Samples and radio functions need synchronized timely delivery",
+        "distractors": [
+          "It changes malloc syntax",
+          "It eliminates antenna calibration"
+        ]
+      }
+    ],
+    "sources": [
+      [
+        "Battelle RavenStar public description",
+        "https://www.battelle.org/markets/industry/communications/ravenstar"
+      ],
+      [
+        "O-RAN Alliance",
+        "https://www.o-ran.org/"
+      ]
+    ],
+    "files": [
+      "design.md"
+    ]
+  },
+  {
+    "id": 33,
+    "slug": "instruments",
+    "title": "Automate a mock RF measurement",
+    "track": "RF test automation",
+    "path": "lessons/33_instruments",
+    "kind": "python",
+    "hints": [
+      "Use math.isfinite after float conversion. Catch only expected retryable failures.",
+      "Open CSV with newline=\"\" and use csv.DictWriter with the exact fields."
+    ],
+    "explain": "Explain the four instrument types, SCPI, bounded retries, calibration, communication failure versus RF failure, and what metadata a real lab log still needs.",
+    "quiz": [
+      {
+        "prompt": "Which instrument measures S-parameters?",
+        "answer": "VNA",
+        "distractors": [
+          "GDB",
+          "A ring buffer"
+        ]
+      },
+      {
+        "prompt": "Should an instrument timeout count as a passing measurement?",
+        "answer": "No",
+        "distractors": [
+          "Yes if the last result passed",
+          "Only when attempts=1"
+        ]
+      },
+      {
+        "prompt": "What should happen to a valid out-of-limit reading?",
+        "answer": "Record a failed measurement without retrying to seek a pass",
+        "distractors": [
+          "Retry until it passes",
+          "Replace it with zero"
+        ]
+      }
+    ],
+    "sources": [
+      [
+        "PyVISA documentation",
+        "https://pyvisa.readthedocs.io/"
+      ],
+      [
+        "PySDR",
+        "https://pysdr.org/"
+      ]
+    ],
+    "files": [
+      "lab.py"
+    ]
+  },
+  {
+    "id": 34,
+    "slug": "c_capstone",
+    "title": "Ship the offline receiver pipeline",
+    "track": "C capstone",
+    "path": "lessons/34_c_capstone",
+    "kind": "capstone",
+    "hints": [
+      "First get decode, ring and FIR module tests passing. Then process each complete four-byte record through queue and FIR.",
+      "Use double or long double for the accumulated input power, widen each product, check fread/ferror/fwrite/fclose, and avoid division for empty input."
+    ],
+    "explain": "Walk through the module boundaries, malformed-input behavior, queue bounds, memory ownership, power units and rounding. Explain your measured bottleneck and one limitation.",
+    "quiz": [
+      {
+        "prompt": "What units does mean I²+Q² use in this project?",
+        "answer": "Raw ADC count squared",
+        "distractors": [
+          "Calibrated dBm",
+          "Hertz"
+        ]
+      },
+      {
+        "prompt": "What happens to a truncated final sample?",
+        "answer": "The CLI returns nonzero",
+        "distractors": [
+          "It is silently dropped",
+          "It is counted as zero"
+        ]
+      },
+      {
+        "prompt": "What is the output/reset contract?",
+        "answer": "One output per input, zero initial history, no tail flush",
+        "distractors": [
+          "Always append three extra samples",
+          "Keep state across separate process runs"
+        ]
+      }
+    ],
+    "sources": [
+      [
+        "Beej’s Guide to C",
+        "https://beej.us/guide/bgc/html/split/"
+      ],
+      [
+        "PySDR",
+        "https://pysdr.org/"
+      ]
+    ],
+    "files": [
+      "main.c",
+      "decode.c",
+      "ring.c",
+      "dsp.c",
+      "pipeline.h"
+    ]
+  },
+  {
+    "id": 35,
+    "slug": "fpga_capstone",
+    "title": "Match hardware to the C golden model",
+    "track": "FPGA capstone",
+    "path": "lessons/35_fpga_capstone",
+    "kind": "hdl",
+    "hints": [
+      "Build a combinational signed accumulator and quantized value before the sequential process.",
+      "Sign-extend input/history to 64 bits before multiplication. Use signed division, then bounds comparisons, not arithmetic shift for truncation toward zero."
+    ],
+    "explain": "Explain signed widths, scale, C-versus-HDL rounding, handshake stalls, reset/flush, measured cycle latency and why simulation still does not prove synthesis/timing closure.",
+    "quiz": [
+      {
+        "prompt": "When should FIR history advance?",
+        "answer": "Only on an accepted input transaction",
+        "distractors": [
+          "Every clock regardless of valid",
+          "Whenever ready is low"
+        ]
+      },
+      {
+        "prompt": "Why might >>>15 disagree with C division for negative values?",
+        "answer": "Arithmetic shift rounds negative values differently from truncation toward zero",
+        "distractors": [
+          "C cannot handle negative ints",
+          "Shifts multiply by 32768"
+        ]
+      },
+      {
+        "prompt": "What does reset do in this contract?",
+        "answer": "Discards pending output and clears delay history",
+        "distractors": [
+          "Flushes old outputs automatically",
+          "Keeps old FIR history"
+        ]
+      }
+    ],
+    "sources": [
+      [
+        "HDLBits exercises",
+        "https://hdlbits.01xz.net/wiki/Main_Page"
+      ],
+      [
+        "Icarus Verilog documentation",
+        "https://steveicarus.github.io/iverilog/"
+      ],
+      [
+        "PySDR",
+        "https://pysdr.org/"
+      ]
+    ],
+    "files": [
+      "lab.v"
+    ],
+    "golden": true
+  },
+  {
+    "id": 36,
+    "slug": "interview",
+    "title": "Defend the engineering decisions",
+    "track": "Interview and transfer",
+    "path": "lessons/36_interview",
+    "kind": "design",
+    "hints": [
+      "Use your ring, vector, FIR and capstones as concrete examples.",
+      "If you cannot explain a failure mode without notes, return to that mission and rebuild a smaller example."
+    ],
+    "explain": "Give a five-minute walkthrough of the two capstones, including a bug you fixed, evidence of correctness, one limitation, and what you would ask the Battelle team.",
+    "quiz": [
+      {
+        "prompt": "An FPGA is best described as what?",
+        "answer": "A configurable parallel hardware platform with resource/timing/verification tradeoffs",
+        "distractors": [
+          "Always faster than any CPU for every task",
+          "A replacement for all RF hardware"
+        ]
+      },
+      {
+        "prompt": "What makes a technical answer convincing?",
+        "answer": "Explicit assumptions, tested boundaries, evidence and tradeoffs",
+        "distractors": [
+          "Only memorized definitions",
+          "Claiming tools prove all correctness"
+        ]
+      },
+      {
+        "prompt": "What should guide role-specific preparation?",
+        "answer": "The actual posting and confirmed team requirements",
+        "distractors": [
+          "An assumed proprietary stack",
+          "Only generic interview puzzles"
+        ]
+      }
+    ],
+    "sources": [
+      [
+        "Beej’s Guide to C",
+        "https://beej.us/guide/bgc/html/split/"
+      ],
+      [
+        "PySDR",
+        "https://pysdr.org/"
+      ],
+      [
+        "HDLBits exercises",
+        "https://hdlbits.01xz.net/wiki/Main_Page"
+      ]
+    ],
+    "files": [
+      "design.md"
+    ]
+  }
+]

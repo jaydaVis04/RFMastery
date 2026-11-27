@@ -1,0 +1,6 @@
+#!/usr/bin/env python3
+"""Signal Station: a local C, FPGA and RF learning lab."""
+from course.engine import main
+
+if __name__ == '__main__':
+    raise SystemExit(main())
