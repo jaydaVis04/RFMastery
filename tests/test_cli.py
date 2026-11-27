@@ -15,7 +15,7 @@ class EndToEndTests(unittest.TestCase):
     def test_first_mission_complete_without_touching_real_progress(self):
         with tempfile.TemporaryDirectory(prefix='signal-e2e-') as d:
             root=Path(d)/'course'
-            shutil.copytree(ROOT,root,ignore=shutil.ignore_patterns('.build','.progress','__pycache__'))
+            shutil.copytree(ROOT,root,ignore=shutil.ignore_patterns('.build','.progress','.deps','__pycache__'))
             env=os.environ.copy()
             env['SIGNAL_STATION_STATE']=str(root/'.progress/state.json')
             def run(args,input=None):

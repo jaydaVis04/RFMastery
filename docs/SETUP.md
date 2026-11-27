@@ -1,6 +1,26 @@
 # Setup and troubleshooting
 
-Run commands from the repository root. The course itself uses only Python’s standard library.
+Run commands from the repository root. Course logic uses Python's standard library; Rich supplies the terminal presentation.
+
+## Automatic setup
+
+```sh
+./learn setup
+```
+
+This installs Rich from requirements.txt into `.deps` and verifies C. It does not install system packages or use sudo. Your Mac's C compiler is already working. It preserves lesson sources and progress. Python package installation needs access to the package server; use your normal terminal if the agent session cannot reach it.
+
+The native Verilog simulator is only needed for the five FPGA missions. Add it when ready:
+
+```sh
+./learn setup --fpga
+```
+
+On macOS this uses Homebrew's `icarus-verilog` formula, then verifies the simulator and all five FPGA reference implementations. It needs permission to write Homebrew directories. Existing simulator tools are not reinstalled. Python packages provide the interface; C compilation and HDL simulation are external programs and cannot be replaced by installing Rich or other interface packages.
+
+Rich can also render using the copy bundled with pip when a standalone installation is unavailable. That offline fallback provides panels, tables, progress and source highlighting; the normal Rich dependency provides complete Markdown/Pygments support. Plain output remains available with `--color never` or `NO_COLOR`.
+
+To inspect tools without installing anything:
 
 ```sh
 python3 --version
@@ -21,12 +41,16 @@ xcode-select --install
 To enable the five HDL missions, install Icarus Verilog using your package manager, for example with Homebrew:
 
 ```sh
-brew install iverilog
-./learn doctor
+brew install icarus-verilog
+./learn doctor --fpga
 python3 tools/validate_course.py --require-hdl
 ```
 
-These are setup instructions for you to run; this course does not install packages automatically. `iverilog` compiles testbenches and `vvp` executes them. GTKWave is optional for viewing VCDs; self-checking testbenches remain the source of pass/fail results. Follow [Icarus’s official installation guide](https://steveicarus.github.io/iverilog/usage/installation.html) for other installation methods.
+`doctor` only inspects tools; the explicit `setup` command installs missing dependencies. The [Homebrew formula](https://formulae.brew.sh/formula/icarus-verilog) is named `icarus-verilog`; its executables are named `iverilog` and `vvp`. GTKWave is optional for viewing VCDs; self-checking testbenches remain the source of pass/fail results. Follow [Icarus’s official installation guide](https://steveicarus.github.io/iverilog/usage/installation.html) for other installation methods.
+
+An installation attempted inside this restricted agent session was denied writes to `/opt/homebrew`, including its lock directory. The directory ownership already matched the local account. Homebrew's generic ownership advice was caused here by the session restrictions; the course does not run chown, chmod on system directories, or sudo to bypass them.
+
+`doctor` runs the C probes and reports later FPGA tools separately. It returns nonzero for broken C setup. `doctor --fpga` additionally requires the Verilog compile/simulation probe to pass, returning nonzero for a missing or broken simulator. GTKWave and Valgrind are optional; neither is necessary to start learning. Full FPGA setup is verified only after the simulator and its reference tests execute successfully.
 
 Use LLDB on macOS. Linux Valgrind instructions do not imply supported native operation on this Apple Silicon Mac.
 

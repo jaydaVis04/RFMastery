@@ -1,6 +1,8 @@
-.PHONY: start doctor map test validate validate-starters validate-hdl
+.PHONY: start setup doctor map test validate validate-starters validate-hdl
 start:
 	python3 learn
+setup:
+	python3 learn setup
 doctor:
 	python3 learn doctor
 map:

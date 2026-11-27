@@ -1,1 +1,1 @@
-"""Standard-library-only course tools."""
+"""Local course tools with optional Rich terminal presentation."""

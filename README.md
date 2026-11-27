@@ -1,15 +1,25 @@
 # Signal Station
 
-An interactive C, FPGA and RF training course, built in this directory for your internship preparation. You are the new software engineer at a fictional receiver lab. Each mission restores another part of an offline radio system, from the first C executable to a tested streaming filter.
+An interactive C, FPGA and RF training course with a Rich terminal interface. You are the new software engineer at a fictional receiver lab. Each mission restores another part of an offline radio system, from the first C executable to a tested streaming filter.
+
+![Signal Station terminal dashboard](docs/assets/terminal-preview.png)
 
 **Start here in your terminal:**
 
 ```sh
-./learn doctor
+./learn setup
 ./learn
 ```
 
-If your terminal cannot execute `learn`, use `python3 learn` with the same arguments. You need Python 3.10+ and a C17 compiler. The C compiler and sanitizers work on this Mac. FPGA simulation needs Icarus Verilog: see [setup](docs/SETUP.md). Everything runs locally; there is no account, cloud service, paid dependency, radio or FPGA board requirement.
+If your terminal cannot execute `learn`, use `python3 learn` with the same arguments. You need Python 3.10+ and a C17 compiler. `setup` installs Python dependencies into project-local `.deps` and checks C; it does not install system packages. The compiler already works on this Mac. When you reach FPGA missions, `./learn setup --fpga` adds Icarus Verilog through Homebrew and validates those missions. See [setup details](docs/SETUP.md).
+
+The C compiler and sanitizers work on this Mac. Rich styling is already available here through an offline fallback using pip's bundled Rich. If you want to begin C immediately, run `./learn`; the simulator is only required for the five FPGA missions. Everything runs locally; there is no account, cloud service, paid dependency, radio or FPGA board requirement.
+
+## A terminal that feels like a lab
+
+Rich provides a receiver-console dashboard, current progress, readable mission tables, grouped keyboard controls, color-coded feedback, hint/flag panels, and highlighted lesson examples. Cyan identifies actions; green shows verified success; amber marks hints and incomplete setup; red identifies failures; magenta celebrates earned flags. Your terminal font and background remain in control.
+
+Color turns on automatically in terminals. Use `./learn --color always` for explicit styled output, `./learn --color never` for plain text, or set `NO_COLOR` to disable styling. `NO_COLOR` takes precedence. Redirected output stays plain by default. There is also a plain-text fallback if Rich is unavailable, so presentation dependencies do not prevent study.
 
 ## Your first mission
 
@@ -64,6 +74,10 @@ Use `./learn map` for the complete lesson list. [The 12-week plan](docs/ROADMAP.
 | Command | Purpose |
 |---|---|
 | `./learn` | Interactive terminal menu, defaults to your next unfinished mission |
+| `./learn setup` | Install Python dependencies locally and verify C, without installing system packages |
+| `./learn setup --fpga` | Also install the native simulator and verify the five FPGA reference missions |
+| `./learn doctor` | Verify C/sanitizers and show which optional or later tools are available |
+| `./learn doctor --fpga` | Require working Verilog compilation/simulation as well |
 | `./learn lesson N` | Read a lesson and its contract |
 | `./learn check N` | Compile and run its tests; C uses ASan and UBSan by default |
 | `./learn quiz N` | Recall check with shuffled choices; final mission has 12 mixed questions |
@@ -86,10 +100,11 @@ If sanitizers are unavailable on another platform, `./learn check N --plain` is 
 - `tests.c`, `tb.v`, `test_lab.py`: visible behavioral checks.
 - `course/`: runner, catalogue, independent oracles and references (spoilers).
 - `.progress/state.json`: your flags, notes, attempts, hints and review schedule. Back it up.
+- `.deps/`: project-local Rich packages installed by setup; excluded from Git.
 - `.build/`: generated executables, VCDs, vectors and benchmark artifacts; safe to regenerate.
 - `tools/`: synthetic data, spectrum explorer and course validation.
 
-No existing project was replaced: this directory was empty when the course was created. No Git repository is initialized automatically. When useful, initialize your own repository and commit your lesson implementations and notes; `.gitignore` excludes generated artifacts and private progress.
+No existing project was replaced: this directory was empty when the course was created. Learning commands do not initialize or commit Git automatically. Use your normal Git workflow to track implementations and notes; `.gitignore` excludes generated artifacts, installed dependencies and private progress. The public project is [RFMastery](https://github.com/jaydaVis04/RFMastery).
 
 ## Why the course works this way
 

@@ -5,6 +5,7 @@ import json
 from pathlib import Path
 import tempfile
 import unittest
+from types import SimpleNamespace
 from unittest.mock import patch
 
 from course import engine as e
@@ -118,6 +119,78 @@ class CourseTests(unittest.TestCase):
         with patch.object(e.shutil,'which',return_value=None):
             with self.assertRaises(e.CourseError):
                 e.check(e.mission(18),quiet=True)
+
+    def test_doctor_fails_when_hdl_missing_despite_working_c(self):
+        tools = {'cc': '/usr/bin/cc', 'lldb': '/usr/bin/lldb'}
+        with patch.object(e.shutil, 'which', side_effect=tools.get), \
+             patch.object(e, 'compiler', return_value=['cc']), \
+             patch.object(e, 'run', return_value=SimpleNamespace(returncode=0, stdout='')):
+            self.assertFalse(e.doctor(require_hdl=True))
+
+    def test_doctor_rejects_broken_hdl_simulation(self):
+        def probe(command, **kwargs):
+            if command[0] == 'vvp':
+                return SimpleNamespace(returncode=1, stdout='')
+            return SimpleNamespace(returncode=0, stdout='')
+        with patch.object(e.shutil, 'which', side_effect=lambda x:'/tools/'+x), \
+             patch.object(e, 'run', side_effect=probe):
+            self.assertFalse(e.doctor(require_hdl=True))
+
+    def test_setup_uses_correct_package_and_checks_hdl_only(self):
+        tools = {'brew': '/opt/homebrew/bin/brew'}
+        with patch.object(e.ui, 'BACKEND', 'installed'), \
+             patch.object(e.platform, 'system', return_value='Darwin'), \
+             patch.object(e.shutil, 'which', side_effect=tools.get), \
+             patch.object(e, 'run', return_value=SimpleNamespace(returncode=0)) as runner, \
+             patch.object(e, 'doctor', return_value=True):
+            self.assertTrue(e.setup(fpga=True))
+        self.assertEqual(runner.call_args_list[0].args[0], ['/opt/homebrew/bin/brew','install','icarus-verilog'])
+        self.assertIn('--hdl-only', runner.call_args_list[1].args[0])
+        self.assertIn('--require-hdl', runner.call_args_list[1].args[0])
+        self.assertFalse(e.STATE.exists())
+
+    def test_setup_stops_on_denied_install_without_fake_success(self):
+        tools = {'brew':'/opt/homebrew/bin/brew'}
+        with patch.object(e.ui, 'BACKEND', 'installed'), \
+             patch.object(e.platform, 'system', return_value='Darwin'), \
+             patch.object(e.shutil, 'which', side_effect=tools.get), \
+             patch.object(e, 'run', return_value=SimpleNamespace(returncode=1)), \
+             patch.object(e, 'doctor') as doctor:
+            with self.assertRaisesRegex(e.CourseError, 'normal terminal'):
+                e.setup(fpga=True)
+            doctor.assert_not_called()
+        self.assertFalse(e.STATE.exists())
+
+    def test_setup_does_not_reinstall_existing_simulator(self):
+        with patch.object(e.ui, 'BACKEND', 'installed'), \
+             patch.object(e.shutil, 'which', side_effect=lambda x:'/tools/'+x), \
+             patch.object(e, 'run', return_value=SimpleNamespace(returncode=0)) as runner, \
+             patch.object(e, 'doctor', return_value=True):
+            self.assertTrue(e.setup(fpga=True))
+        self.assertEqual(runner.call_count, 1)
+        self.assertIn('--hdl-only', runner.call_args.args[0])
+
+    def test_doctor_can_run_despite_corrupt_progress(self):
+        e.STATE.write_text('{broken')
+        with patch.object(e, 'doctor', return_value=True):
+            self.assertEqual(e.main(['doctor']), 0)
+        self.assertEqual(e.STATE.read_text(), '{broken')
+
+    def test_default_setup_does_not_install_native_packages(self):
+        with patch.object(e.ui, 'BACKEND', 'installed'), \
+             patch.object(e.shutil, 'which', return_value=None), \
+             patch.object(e, 'run') as runner, \
+             patch.object(e, 'doctor', return_value=True) as doctor:
+            self.assertTrue(e.setup())
+        runner.assert_not_called()
+        doctor.assert_called_once_with(require_hdl=False)
+
+    def test_default_doctor_allows_starting_c_without_fpga_tools(self):
+        tools = {'cc':'/usr/bin/cc','lldb':'/usr/bin/lldb'}
+        with patch.object(e.shutil, 'which', side_effect=tools.get), \
+             patch.object(e, 'compiler', return_value=['cc']), \
+             patch.object(e, 'run', return_value=SimpleNamespace(returncode=0,stdout='')):
+            self.assertTrue(e.doctor())
 
 
 if __name__ == '__main__':

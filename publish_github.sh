@@ -5,15 +5,16 @@ set -euo pipefail
 course_root="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
 cd -- "$course_root"
 target_owner='jaydaVis04'
-target_repo='learn_c'
+target_repo='RFMastery'
 target_full="${target_owner}/${target_repo}"
 target_url="https://github.com/${target_full}"
+legacy_url="https://github.com/${target_owner}/learn_c"
 
 if [[ "${1:-}" == '--dry-run' ]]; then
     printf 'Publish plan:\n'
     printf '  Source: %s\n  Repository: %s\n  Visibility: public\n' "$course_root" "$target_url"
     printf '  Include: course, lessons, tools, tests, docs and root project files.\n'
-    printf '  Exclude: .build, .progress, scratch and Python caches via .gitignore.\n'
+    printf '  Exclude: .build, .progress, .deps, scratch and Python caches via .gitignore.\n'
     printf '  Create an initial commit on main, then push without force.\n'
     printf '  Make the matching existing repository public if needed.\n'
     printf '  Existing repositories with content are never adopted automatically.\n'
@@ -55,7 +56,7 @@ if [[ "$(git branch --show-current)" != 'main' ]]; then
     printf 'Expected branch main. Stopping without renaming your branch.\n' >&2
     exit 1
 fi
-if [[ -n "$(git ls-files -- .build .progress scratch)" ]]; then
+if [[ -n "$(git ls-files -- .build .progress .deps scratch)" ]]; then
     printf 'Generated files or private progress are already tracked. Review them before publishing.\n' >&2
     exit 1
 fi
@@ -63,15 +64,15 @@ fi
 existing_origin="$(git remote get-url origin 2>/dev/null || true)"
 if [[ -n "$existing_origin" ]]; then
     case "$existing_origin" in
-        "${target_url}"|"${target_url}.git"|"git@github.com:${target_full}.git") ;;
+        "${target_url}"|"${target_url}.git"|"git@github.com:${target_full}.git"|"${legacy_url}"|"${legacy_url}.git") ;;
         *) printf 'An unrelated origin is configured: %s. Stopping without changing it.\n' "$existing_origin" >&2; exit 1 ;;
     esac
 fi
 
 # Stage the reviewed course paths explicitly; .gitignore still excludes generated data.
-git add -- .clang-format .gitignore Makefile README.md learn publish_github.sh course docs lessons tests tools
+git add -- .clang-format .gitignore .interface-design Makefile README.md requirements.txt learn publish_github.sh course docs lessons tests tools
 if ! git diff --cached --quiet; then
-    git commit -m 'Add interactive C, FPGA and RF learning course'
+    git commit -m 'Update interactive C, FPGA and RF learning course'
 fi
 
 ensure_public() {

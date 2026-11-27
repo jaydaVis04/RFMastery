@@ -15,10 +15,13 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--starters', action='store_true', help='verify unfinished shipped starters fail')
     parser.add_argument('--require-hdl', action='store_true', help='treat missing HDL simulator as a failure')
+    parser.add_argument('--hdl-only', action='store_true', help='validate only the five FPGA missions')
     parser.add_argument('--mission', type=int, help='validate one mission')
     args = parser.parse_args()
     failed, skipped, passed = [], [], []
     for m in CATALOG:
+        if args.hdl_only and m['kind'] != 'hdl':
+            continue
         if args.mission and m['id'] != args.mission:
             continue
         if m['kind'] == 'design':
@@ -43,7 +46,7 @@ def main():
         else:
             failed.append(m['id'])
             print(f'{m["id"]:02d} FAILED\n{output.getvalue()[-10000:]}')
-    if not args.starters:
+    if not args.starters and not args.hdl_only:
         build = ROOT / '.build/golden-validation'
         build.mkdir(parents=True, exist_ok=True)
         if not golden_vectors(build, quiet=True):

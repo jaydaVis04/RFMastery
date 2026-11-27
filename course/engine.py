@@ -6,6 +6,7 @@ import json
 import math
 import os
 from pathlib import Path
+import platform
 import random
 import shlex
 import shutil
@@ -13,6 +14,8 @@ import subprocess
 import sys
 import tempfile
 import time
+from . import terminal as ui
+from .terminal import print, ask as input
 
 ROOT = Path(__file__).resolve().parent.parent
 CATALOG = json.loads((ROOT / 'course/catalog.json').read_text())
@@ -382,7 +385,7 @@ def submit(state, m, plain=False):
     r['source_digest'] = digest(m)
     r['awarded_at'] = stamp()
     save_state(state)
-    print(f'\nFLAG EARNED: {r["flag"]}')
+    ui.flag(r['flag'])
     if r.get('assisted'):
         print('Assisted practice recorded. Rebuild a variation from memory on a later day.')
     if plain and m['kind'] in ('c', 'console', 'capstone'):
@@ -399,9 +402,11 @@ def status(state, full=False):
     current_flags = sum(bool(state['missions'].get(str(m['id']), {}).get('flag')) and
                         state['missions'][str(m['id'])].get('source_digest') == digest(m) for m in CATALOG)
     due = sum(datetime.fromisoformat(c['due']) <= now() for c in state['cards'].values())
-    print(f'\nSIGNAL STATION  /  C · FPGA · RF\n{current_flags}/36 current flags · {flags} earned historically · {due} review cards due')
+    next_mission = current(state)
+    next_label = f'{next_mission["id"]:02d} · {next_mission["title"]}'
+    ui.dashboard(current_flags, len(CATALOG), flags, due, next_label)
     if full:
-        print('\n  ID  STATUS       MISSION')
+        rows = []
         for m in CATALOG:
             r = state['missions'].get(str(m['id']), {})
             label = 'READY'
@@ -409,14 +414,21 @@ def status(state, full=False):
                 label = 'COMPLETE' if r.get('source_digest') == digest(m) else 'CHANGED'
             elif r.get('checked_digest') == digest(m):
                 label = 'CODE PASSED'
-            suffix = ' [assisted]' if r.get('assisted') else ''
-            print(f'  {m["id"]:02d}  {label:12} {m["title"]}{suffix}')
-    print(f'\nSuggested next: {current(state)["id"]:02d} · {current(state)["title"]}')
-    print('Progress is local. Flags indicate practice completion, not a guarantee of mastery.')
+            rows.append((m['id'], label, m['title'], m['track'], bool(r.get('assisted'))))
+        ui.course_map(rows)
+    if not ui.styled():
+        print(f'\nSuggested next: {next_label}')
+    if not ui.styled():
+        print('Progress is local. Flags indicate practice completion, not a guarantee of mastery.')
 
 
-def doctor():
+def doctor(require_hdl=False):
     print(f'Python: {sys.version.split()[0]}\nWorkspace: {ROOT}\nProgress: {STATE}')
+    backend = {'installed': 'Rich (installed)', 'pip-bundled': 'Rich bundled with pip (offline fallback)',
+               'plain': 'plain text; run ./learn setup for Rich'}[ui.BACKEND]
+    print(f'Interface: {backend}')
+    core_ok = sys.version_info >= (3, 10)
+    print('\nC / RF lessons')
     with tempfile.TemporaryDirectory(prefix='signal-doctor-') as d:
         d = Path(d)
         source = d / 'probe.c'
@@ -424,17 +436,89 @@ def doctor():
         cc = compiler()
         if not shutil.which(cc[0]):
             raise CourseError(f'C compiler missing: {cc[0]}. See docs/SETUP.md.')
-        ok = True
         for plain in (True, False):
             exe = d / ('plain' if plain else 'sanitized')
             built = run(cc+cflags(plain)+[source, '-o', exe], quiet=True).returncode == 0
             works = built and run([exe], quiet=True).returncode == 0
             print(('C17 build/run' if plain else 'AddressSanitizer + UBSan') + ': ' + ('OK' if works else 'UNAVAILABLE'))
-            ok &= works
-    for name in ('iverilog', 'vvp', 'lldb', 'gdb', 'valgrind', 'gtkwave'):
-        print(f'{name}: {shutil.which(name) or "not installed (see docs/SETUP.md)"}')
-    print('No packages are installed automatically. Missing HDL tools block HDL checks, not C/RF lessons.')
-    return ok
+            core_ok &= works
+        print('\nFPGA lessons — Icarus Verilog is needed when you reach these missions')
+        hdl_ok = all(shutil.which(name) for name in ('iverilog', 'vvp'))
+        if hdl_ok:
+            hdl_source = d / 'probe.v'
+            hdl_binary = d / 'simulation'
+            hdl_source.write_text('module tb; reg [3:0] data=10; reg [1:0] sel=1; wire y;\n'
+                                  'assign y=data[sel]; initial begin #1; '
+                                  'if(y!==1\'b1)$fatal(1,"mux failed"); '
+                                  '$display("PASS");$finish;end endmodule\n')
+            built = run(['iverilog', '-g2012', '-s', 'tb', '-o', hdl_binary, hdl_source], quiet=True).returncode == 0
+            if built:
+                result = run(['vvp', hdl_binary], cwd=d, quiet=True)
+                hdl_ok = result.returncode == 0 and 'PASS' in result.stdout.splitlines()
+            else:
+                hdl_ok = False
+            print('Verilog compile + simulation: ' + ('OK' if hdl_ok else 'FAILED'))
+        else:
+            print('MISSING: iverilog / vvp. Optional for C; install later with ./learn setup --fpga.')
+    print('\nOptional tools — these do not block the course')
+    debugger = shutil.which('lldb') or shutil.which('gdb')
+    print(f'Debugger: {debugger or "not installed (optional for automated checks)"}')
+    print(f'GTKWave waveform viewer: {shutil.which("gtkwave") or "not installed (optional)"}')
+    if platform.system() == 'Darwin' and platform.machine() in ('arm64', 'aarch64'):
+        print('Valgrind: not required on Apple Silicon; use the working ASan/UBSan builds.')
+    else:
+        print(f'Valgrind: {shutil.which("valgrind") or "not installed (optional)"}')
+    print('\nC / RF: ' + ('READY' if core_ok else 'NEEDS SETUP'))
+    print('FPGA: ' + ('READY' if hdl_ok else 'NEEDS SETUP'))
+    if core_ok and hdl_ok:
+        print('All required tool checks passed. Start with ./learn')
+    elif core_ok:
+        print('You can start C now with ./learn. Only the five FPGA missions need the missing simulator.')
+    return core_ok and (hdl_ok or not require_hdl)
+
+
+def setup(fpga=False):
+    """Set up Python packages; install/validate native FPGA tools only when explicitly selected."""
+    print('Setting up Signal Station. Learner files and progress are preserved.', flush=True)
+    if ui.BACKEND != 'installed':
+        print('Installing Rich into .deps (project-local Python packages)...', flush=True)
+        result = run([sys.executable, '-m', 'pip', 'install', '--disable-pip-version-check', '--no-cache-dir',
+                      '--target', ROOT / '.deps', '-r', ROOT / 'requirements.txt'], timeout=180)
+        if result.returncode:
+            raise CourseError('Rich installation was blocked or failed. The existing offline interface remains usable. '
+                              'Run ./learn setup in your normal terminal to install dependencies with network access.')
+        ui.load_backend()
+        if ui.BACKEND != 'installed':
+            raise CourseError('Rich could not be imported after installation. See docs/SETUP.md.')
+    if fpga and not all(shutil.which(name) for name in ('iverilog', 'vvp')):
+        if platform.system() != 'Darwin':
+            raise CourseError('Install Icarus Verilog with your system package manager (Debian/Ubuntu: '
+                              'sudo apt install iverilog), then rerun ./learn setup --fpga. See docs/SETUP.md.')
+        brew = shutil.which('brew')
+        if not brew:
+            raise CourseError('Homebrew is not installed. See docs/SETUP.md for the official Icarus installation guide.')
+        result = run([brew, 'install', 'icarus-verilog'], timeout=600)
+        if result.returncode:
+            raise CourseError('Icarus installation failed or was blocked. If this ran inside the restricted '
+                              'agent session, run ./learn setup --fpga once in your normal terminal. It needs '
+                              'network access and permission to write Homebrew directories. '
+                              'Do not change directory ownership just to bypass the agent sandbox.')
+    elif fpga:
+        print('Icarus Verilog is already installed; no package installation needed.')
+    else:
+        print('Python-only setup selected; no system packages will be installed.')
+    if not doctor(require_hdl=fpga):
+        return False
+    if not fpga:
+        print('\nSetup complete for C / RF study. Start with ./learn. Add FPGA tools later with ./learn setup --fpga.')
+        return True
+    print('\nVerifying the five FPGA missions against reference implementations...', flush=True)
+    result = run([sys.executable, ROOT / 'tools/validate_course.py', '--hdl-only', '--require-hdl'], timeout=180)
+    if result.returncode:
+        print('Tools are installed, but an FPGA reference check failed. Read the diagnostic above; no flags were awarded.')
+        return False
+    print('\nSetup complete. Start the course with ./learn')
+    return True
 
 
 def benchmark(m):
@@ -476,20 +560,22 @@ def show_solution(state, m):
     save_state(state)
     print('REFERENCE SOLUTION — assisted practice recorded. Your files are unchanged.')
     for path in sorted(solution.iterdir()):
-        print(f'\n--- {path.name} ---\n{path.read_text()}')
+        print(f'\n--- {path.name} ---')
+        ui.syntax(path.read_text(), path.suffix.lstrip('.').replace('v', 'verilog') if path.suffix == '.v' else
+                  'python' if path.suffix == '.py' else 'c')
 
 
 def menu(state):
     while True:
         m = current(state)
         status(state)
-        print('\n  1 Read mission       2 Run checks       3 Quiz\n  4 Hint               5 Explain          6 Submit for flag\n  7 Review             8 Course map       9 Setup check\n  q Save and exit')
+        ui.menu()
         choice = input('Choose: ').strip().lower()
         try:
             if choice == 'q':
                 return 0
             if choice == '1':
-                print((ROOT / m['path'] / 'README.md').read_text())
+                ui.markdown((ROOT / m['path'] / 'README.md').read_text())
             elif choice == '2':
                 result = check(m)
                 if result:
@@ -519,7 +605,7 @@ def menu(state):
 def reveal_hint(state, m):
     r = record(state, m)
     index = min(r.get('hints', 0), len(m['hints'])-1)
-    print(f'Hint {index+1}/{len(m["hints"])}: {m["hints"][index]}')
+    ui.hint(index+1, len(m['hints']), m['hints'][index])
     r['hints'] = index+1
     save_state(state)
 
@@ -528,13 +614,23 @@ def main(argv=None):
     parser = argparse.ArgumentParser(description='Signal Station: interactive local C + FPGA + RF course')
     parser.add_argument('command', nargs='?', default='start', choices=[
         'start', 'map', 'status', 'lesson', 'check', 'quiz', 'hint', 'explain', 'submit',
-        'review', 'doctor', 'solution', 'benchmark', 'interview', 'notes'])
+        'review', 'doctor', 'setup', 'solution', 'benchmark', 'interview', 'notes'])
     parser.add_argument('number', nargs='?', type=int, help='mission 1–36 (default: next unfinished)')
     parser.add_argument('--plain', action='store_true', help='explicitly build C without sanitizers')
     parser.add_argument('--all', action='store_true', help='review practiced cards before they are due')
     parser.add_argument('--limit', type=int, default=10, help='maximum review cards per session')
+    parser.add_argument('--color', choices=['auto', 'always', 'never'], default='auto',
+                        help='Rich output: auto in terminals, always for previews, never for plain text')
+    parser.add_argument('--fpga', action='store_true',
+                        help='include native Verilog tools in setup, or require them for doctor')
     args = parser.parse_args(argv)
+    ui.configure(args.color)
     try:
+        # Tool setup remains usable even if a learner's progress file needs repair.
+        if args.command == 'doctor':
+            return 0 if doctor(require_hdl=args.fpga) else 1
+        if args.command == 'setup':
+            return 0 if setup(fpga=args.fpga) else 1
         state = load_state()
         m = mission(args.number) if args.number is not None else current(state)
         if args.command == 'start':
@@ -542,7 +638,7 @@ def main(argv=None):
         if args.command in ('map', 'status'):
             status(state, args.command == 'map')
         elif args.command == 'lesson':
-            print((ROOT / m['path'] / 'README.md').read_text())
+            ui.markdown((ROOT / m['path'] / 'README.md').read_text())
         elif args.command == 'check':
             passed = check(m, args.plain)
             r = record(state, m)
@@ -564,8 +660,6 @@ def main(argv=None):
             if args.limit < 1:
                 raise CourseError('--limit must be positive.')
             review(state, args.limit, args.all)
-        elif args.command == 'doctor':
-            return 0 if doctor() else 1
         elif args.command == 'solution':
             show_solution(state, m)
         elif args.command == 'benchmark':
